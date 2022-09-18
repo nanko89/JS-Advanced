@@ -218,10 +218,55 @@ function diagonalAttack(array) {
     matrix.forEach((row) => console.log(row.join(" ")));
   }
 }
-diagonalAttack([
-  "5 3 12 3 1",
-  "11 4 23 2 5",
-  "101 12 3 21 10",
-  "1 4 5 2 2",
-  "5 22 33 11 1",
-]);
+
+//12. Orbit
+
+function orbit(arr) {
+  let [row, col, x, y] = arr;
+
+  let matrix = [];
+
+  for (let i = 0; i < row; i++) {
+    matrix.push([]);
+  }
+
+  for (let rows = 0; rows < row; rows++) {
+    for (let cols = 0; cols < col; cols++) {
+      let a = Math.abs(rows - x);
+      let b = Math.abs(cols - y);
+      matrix[rows][cols] = Math.max(a, b) + 1;
+    }
+  }
+
+  console.log(matrix.map((rows) => rows.join(" ")).join("\n"));
+}
+
+orbit([4, 4, 0, 0]);
+
+//13. Spiral Matrix
+function spiralMatrix(rows, cols) {
+  let count = 0;
+  let maxCount = rows * cols;
+  let minRow = 0;
+  let minCol = 0;
+  let maxRow = rows - 1;
+  let maxCol = cols - 1;
+
+  let matrix = [];
+  for (let r = 0; r < rows; r++) matrix[r] = [];
+  while (count < maxCount) {
+    for (let c = minCol; c <= maxCol && count < maxCount; c++)
+      matrix[minRow][c] = ++count;
+    minRow++;
+    for (let r = minRow; r <= maxRow && count < maxCount; r++)
+      matrix[r][maxCol] = ++count;
+    maxCol--;
+    for (let c = maxCol; c >= minCol && count < maxCount; c--)
+      matrix[maxRow][c] = ++count;
+    maxRow--;
+    for (let r = maxRow; r >= minRow && count < maxCount; r--)
+      matrix[r][minCol] = ++count;
+    minCol++;
+  }
+  matrix.forEach((row) => console.log(row.join(" ")));
+}
