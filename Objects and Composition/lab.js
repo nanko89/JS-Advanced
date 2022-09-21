@@ -90,5 +90,85 @@ const orders = [
 ];
 
 //05.Assembly Line
+function createAssemblyLine() {
+  return {
+    hasClima: (car) => {
+      car.temp = 21;
+      car.tempSettings = 21;
+      car.adjustTemp = () => {
+        if (car.temp < car.tempSettings) {
+          car.temp++;
+        } else if (car.temp > car.tempSettings) {
+          car.temp--;
+        }
+      };
+    },
 
-objectFactory();
+    hasAudio: (car) => {
+      car.currentTrack = { name: "", artist: "" };
+      car.nowPlaying = () => {
+        if (car.currentTrack != null) {
+          console.log(
+            `Now playing ${car.currentTrack.name} by ${car.currentTrack.artist}`
+          );
+        }
+      };
+    },
+
+    hasParktronic: (car) => {
+      car.checkDistance = (distance) => {
+        if (distance < 0.1) {
+          console.log("Beep! Beep! Beep!");
+        } else if (distance >= 0.1 && distance < 0.25) {
+          console.log("Beep! Beep!");
+        } else if (distance >= 0.25 && distance < 0.5) {
+          console.log("Beep!");
+        } else {
+          console.log("");
+        }
+      };
+    },
+  };
+}
+
+//06. From JSON to HTML Table
+function jsonToHtml(input) {
+  let arr = JSON.parse(input);
+  let htmlText = ["<table>"];
+
+  htmlText.push(makeHeaderRow(arr[0]));
+  arr.forEach((obj) => htmlText.push(makeRows(obj)));
+  htmlText.push("</table>");
+
+  function makeHeaderRow(array) {
+    let keys = [];
+    Object.keys(array).forEach((key) => {
+      keys.push(`<th>${escapeHTML(key)}</th>`);
+    });
+
+    return "<tr>" + keys.join("") + "</tr>";
+  }
+  function makeRows(obj) {
+    let rows = [];
+    Object.values(obj).forEach((value) => {
+      rows.push(`<td>${escapeHTML(value)}</td>`);
+    });
+
+    return "<tr>" + rows.join("") + "</tr>";
+  }
+  function escapeHTML(value) {
+    return value
+      .toString()
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  return htmlText.join("\r\n");
+}
+fromJSONToHTMLTable(`[{"Name":"Stamat",
+"Score":5.5},
+{"Name":"Rumen",
+"Score":6}]`);
