@@ -211,11 +211,80 @@ function createSortedList() {
   }
 }
 
-let list = createSortedList();
-list.add(5);
-list.add(6);
-list.add(7);
-console.log(list.size);
-console.log(list.get(1));
-list.remove(1);
-console.log(list.get(1));
+//10. Heroes
+
+function solve() {
+  const canCast = (state) => ({
+    cast: (spell) => {
+      console.log(`${state.name} cast ${spell}`);
+      state.mana--;
+    },
+  });
+
+  const canFight = (state) => ({
+    fight: () => {
+      console.log(`${state.name} slashes at the foe!`);
+      state.stamina--;
+    },
+  });
+
+  const mage = (name) => {
+    let state = {
+      name,
+      health: 100,
+      mana: 100,
+    };
+    return Object.assign(state, canCast(state));
+  };
+
+  const fighter = (name) => {
+    let state = { name, health: 100, stamina: 100 };
+    return Object.assign(state, canFight(state));
+  };
+
+  return { mage: mage, fighter: fighter };
+}
+
+//11. Jan's Notation *
+function jansNotation(arr) {
+  let nums = [];
+  let operator = [];
+  let results = [];
+
+  let operationEnum = {
+    "+": (num1, num2) => num1 + num2,
+    "-": (num1, num2) => num1 - num2,
+    "*": (num1, num2) => num1 * num2,
+    "/": (num1, num2) => num1 / num2,
+  };
+
+  for (const item of arr) {
+    if (typeof item == "number") {
+      nums.push(item);
+    } else {
+      operator.push(item);
+    }
+  }
+
+  if (operator.length < nums.length - 1) {
+    console.log("Error: too many operands!");
+    return;
+  } else if (operator.length >= nums.length) {
+    console.log("Error: not enough operands!");
+    return;
+  }
+
+  for (const item of arr) {
+    if (typeof item == "number") {
+      results.push(item);
+    } else {
+      let num2 = results.pop();
+      let num1 = results.pop();
+      let currentResult = operationEnum[item](num1, num2);
+      results.push(currentResult);
+    }
+  }
+  console.log(results[0]);
+}
+
+jansNotation([3, 4, "+"]);
