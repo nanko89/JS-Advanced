@@ -53,7 +53,9 @@ function solve(e) {
     let tdYear = elementsCreator("td");
     tdYear.appendChild(document.createTextNode(`Year:${Number(year.value)}`));
     let tdDescription = elementsCreator("td");
-    tdDescription.appendChild(document.createTextNode(`Description:${description.value}`));
+    tdDescription.appendChild(
+      document.createTextNode(`Description:${description.value}`)
+    );
     tdDescription.setAttribute("colspan", 3);
 
     //Implement event to More Button
@@ -99,31 +101,3 @@ function solve(e) {
     year.value = "";
   }
 }
-
-
-
-<trclass="info">
-    <td>Chair</td>
-    <td>48.00</td>
-    <td>
-        <buttonclass="moreBtn">LessInfo</button>
-        <buttonclass="buyBtn">Buyit</button>
-    </td>
-</tr>
-<trclass="hide"style="display:contents;">
-    <td>Year:2016</td>
-    <tdcolspan="3">Comfortableforyouandyourpet!</td>
-</tr>
-
-<trclass="info">
-    <td>Chair</td>
-    <td>48.00</td>
-    <td>
-        <buttonclass="moreBtn">LessInfo</button>
-        <buttonclass="buyBtn">Buyit</button>
-    </td>
-</tr>
-<trclass="hide"style="display:contents;">
-    <td>Year:2016</td>
-    <tdcolspan="3">Description:Comfortableforyouandyourpet!</td>
-</tr>
