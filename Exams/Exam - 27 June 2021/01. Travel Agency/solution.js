@@ -5,15 +5,16 @@ function solution() {
   const editBtn = document.querySelector("#editBTN");
   const continueBtn = document.querySelector("#continueBTN");
   
-  let fname = document.querySelector("#fname")
-  let email = document.querySelector("#email")
-  let phone = document.querySelector("#phone")
-  let address = document.querySelector("#address")
-  let code = document.querySelector("#code")
-  
-  let ulInfoPreview = document.querySelector("#infoPreview");
-  
-  submitBtn.addEventListener("click", submit)
+  const fname = document.querySelector("#fname");
+  const email = document.querySelector("#email");
+  const phone = document.querySelector("#phone");
+  const address = document.querySelector("#address");
+  const code = document.querySelector("#code");
+
+  const ulInfoPreview = document.querySelector("#infoPreview");
+  const div = document.querySelector("#block");
+
+  submitBtn.addEventListener("click", submit);
   
   function submit(e) {
     e.preventDefault();
@@ -21,26 +22,26 @@ function solution() {
     let fnameValue = fname.value;
     let emailValue = email.value;
     let phoneValue = phone.value
-    let addressValue = address.value
+    let addressValue = address.value;
     let codeValue = code.value;
 
     //Check inputs
     if(!fnameValue || !emailValue) {
       return;
     }
-
+  
+    //Factory for html elements
+    htmlGenerator("li", `Full Name: ${fnameValue}`, ulInfoPreview);
+    htmlGenerator("li", `Email: ${emailValue}`, ulInfoPreview);
+    htmlGenerator("li", `Phone Number: ${phoneValue}`, ulInfoPreview);
+    htmlGenerator("li", `Address: ${addressValue}`, ulInfoPreview);
+    htmlGenerator("li", `Postal Code: ${codeValue}`, ulInfoPreview);
+  
     //Disable and enable buttons
     submitBtn.setAttribute("disabled", true);
     editBtn.disabled = false;
     continueBtn.disabled = false;
-  
-    //Factory for html elements
-    htmlGenerator("li", `Full name: ${fnameValue}`, ulInfoPreview)
-    htmlGenerator("li", `Email: ${emailValue}`, ulInfoPreview)
-    htmlGenerator("li", `Phone number: ${phoneValue}`, ulInfoPreview)
-    htmlGenerator("li", `Address: ${addressValue}`, ulInfoPreview)
-    htmlGenerator("li", `Postal code: ${codeValue}`, ulInfoPreview)
-  
+
     //Add events to buttons
     editBtn.addEventListener("click", editInfo);
     continueBtn.addEventListener("click", continueInfo);
@@ -52,7 +53,7 @@ function solution() {
     address.value = "";
     code.value = "";
 
-    function editInfo(e){
+    function editInfo(){
       let listItem = ulInfoPreview.querySelectorAll("li");
     
        fname.value = fnameValue;
@@ -60,17 +61,16 @@ function solution() {
        phone.value = phoneValue;
        address.value = addressValue;
        code.value = codeValue;
-          
-       Array.from(listItem).forEach(l => l.remove());
-      
+                
        //Disable and enable buttons
        submitBtn.disabled = false;
        editBtn.disabled = true;
        continueBtn.disabled = true;
+
+       Array.from(listItem).forEach(l => l.remove());
      }
 
      function continueInfo(){
-      let div = document.querySelector("#block");
       while(div.firstChild){
         div.firstChild.remove()
       }
