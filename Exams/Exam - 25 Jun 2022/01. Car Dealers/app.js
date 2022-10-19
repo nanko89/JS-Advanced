@@ -1,119 +1,113 @@
 window.addEventListener("load", solve);
 
 function solve() {
+  const publishBtn = document.querySelector("#publish");
+  const tBody = document.querySelector("#table-body");
+  const carList = document.querySelector("#cars-list");
+
+  const profit = document.querySelector("#profit");
+
   const make = document.querySelector("#make");
   const model = document.querySelector("#model");
   const year = document.querySelector("#year");
   const fuel = document.querySelector("#fuel");
-  const originalCost = document.querySelector("#original-cost");
-  const sellingPrice = document.querySelector("#selling-price");
+  const cost = document.querySelector("#original-cost");
+  const price = document.querySelector("#selling-price");
 
-  const publishBtn = document.querySelector("#publish");
-  publishBtn.addEventListener("click", publishCar);
+  publishBtn.addEventListener("click", publish);
 
-  function publishCar(e) {
+  function publish(e) {
     e.preventDefault();
-    //Validate input
+
     if (
-      make.value === "" ||
-      model.value === "" ||
-      year.value === "" ||
-      fuel.value === "" ||
-      originalCost.value === "" ||
-      sellingPrice.value === "" ||
-      Number(sellingPrice.value) < Number(originalCost.value)
+      !make.value ||
+      !model.value ||
+      !year.value ||
+      !fuel.value ||
+      !cost.value ||
+      !price.value ||
+      Number(price.value) < Number(cost.value)
     ) {
       return;
     }
 
-    //Factory Function
-    function createElemet(title, text) {
-      let element = document.createElement(title);
-      if (text) {
-        element.textContent = text;
-      }
-      return element;
-    }
-
-    //Create DOM Elements
-    let tbody = document.querySelector("#table-body");
-    let tr = createElemet("tr");
+    let tr = htmlGenerator("tr", "", tBody);
     tr.classList.add("row");
 
-    let tdMake = createElemet("td", `${make.value}`);
-    let tdModel = createElemet("td", `${model.value}`);
-    let tdYear = createElemet("td", `${year.value}`);
-    let tdFuel = createElemet("td", `${fuel.value}`);
-    let tdOriginalCost = createElemet("td", `${originalCost.value}`);
-    let tdSellingPrice = createElemet("td", `${sellingPrice.value}`);
-    let tdActions = createElemet("td");
+    htmlGenerator("td", `${make.value}`, tr);
+    htmlGenerator("td", `${model.value}`, tr);
+    htmlGenerator("td", `${year.value}`, tr);
+    htmlGenerator("td", `${fuel.value}`, tr);
+    htmlGenerator("td", `${cost.value}`, tr);
+    htmlGenerator("td", `${price.value}`, tr);
 
-    let buttonEdit = createElemet("button", "Edit");
-    let buttonSell = createElemet("button", "Sell");
-    buttonEdit.classList.add("action-btn", "edit");
-    buttonSell.classList.add("action-btn", "sell");
+    let td = htmlGenerator("td", "", tr);
+    let editBtn = htmlGenerator("button", "Edit", td);
+    let sellBtn = htmlGenerator("button", "Sell", td);
+    editBtn.classList.add("action-btn", "edit");
+    sellBtn.classList.add("action-btn", "sell");
 
-    //Append Child Element
-    tdActions.appendChild(buttonEdit);
-    tdActions.appendChild(buttonSell);
+    editBtn.addEventListener("click", editCar);
+    sellBtn.addEventListener("click", sellCar);
 
-    tr.appendChild(tdMake);
-    tr.appendChild(tdModel);
-    tr.appendChild(tdYear);
-    tr.appendChild(tdFuel);
-    tr.appendChild(tdOriginalCost);
-    tr.appendChild(tdSellingPrice);
-    tr.appendChild(tdActions);
+    clearInput();
+  }
 
-    tbody.appendChild(tr);
+  function sellCar(e) {
+    let car = e.target.parentElement.parentElement;
+    tBody.removeChild(car);
 
-    //Clear inputs
+    let tdList = car.querySelectorAll("td");
+    let make = tdList[0].textContent;
+    let model = tdList[1].textContent;
+    let year = tdList[2].textContent;
+    let fuel = tdList[3].textContent;
+    let cost = tdList[4].textContent;
+    let price = tdList[5].textContent;
+    let currentProfit = Number(price) - Number(cost);
+
+    let li = htmlGenerator("li", "", carList);
+    li.classList.add("each-list");
+
+    htmlGenerator("span", `${make} ${model}`, li);
+    htmlGenerator("span", `${year}`, li);
+    htmlGenerator("span", `${currentProfit}`, li);
+
+    profit.textContent = (Number(profit.textContent) + currentProfit).toFixed(
+      2
+    );
+  }
+
+  function editCar(e) {
+    let car = e.target.parentElement.parentElement;
+    tBody.removeChild(car);
+
+    let tdList = car.querySelectorAll("td");
+
+    make.value = tdList[0].textContent;
+    model.value = tdList[1].textContent;
+    year.value = tdList[2].textContent;
+    fuel.value = tdList[3].textContent;
+    cost.value = tdList[4].textContent;
+    price.value = tdList[5].textContent;
+  }
+
+  function clearInput() {
     make.value = "";
     model.value = "";
     year.value = "";
     fuel.value = "";
-    originalCost.value = "";
-    sellingPrice.value = "";
+    cost.value = "";
+    price.value = "";
+  }
 
-    // Edit Button
-    buttonEdit.addEventListener("click", (e) => {
-      let clearCar = e.target.parentElement.parentElement;
-      tbody.removeChild(clearCar);
+  function htmlGenerator(type, content, parent) {
+    const element = document.createElement(type);
+    element.textContent = content;
 
-      make.value = tdMake.textContent;
-      model.value = tdModel.textContent;
-      year.value = tdYear.textContent;
-      fuel.value = tdFuel.textContent;
-      originalCost.value = tdOriginalCost.textContent;
-      sellingPrice.value = tdSellingPrice.textContent;
-    });
-
-    //Sell Button
-    buttonSell.addEventListener("click", (e) => {
-      let carList = document.querySelector("#cars-list");
-      let sellingCar = e.target.parentElement.parentElement;
-      tbody.removeChild(sellingCar);
-
-      let makeAndModel = `${tdMake.textContent} ${tdModel.textContent}`;
-      let carYear = `${tdYear.textContent}`;
-      let profitPrice = `${
-        tdSellingPrice.textContent - tdOriginalCost.textContent
-      }`;
-
-      let liElement = createElemet("li");
-      let firstSpan = createElemet("span", makeAndModel);
-      let secondSpan = createElemet("span", carYear);
-      let thirdSpan = createElemet("span", profitPrice);
-
-      liElement.classList.add("each-list");
-      liElement.appendChild(firstSpan);
-      liElement.appendChild(secondSpan);
-      liElement.appendChild(thirdSpan);
-
-      carList.appendChild(liElement);
-      let profit = document.querySelector("#profit");
-      let total = Number(profit.textContent) + Number(profitPrice);
-      profit.textContent = total.toFixed(2);
-    });
+    if (parent) {
+      parent.appendChild(element);
+    }
+    return element;
   }
 }

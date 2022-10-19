@@ -10,8 +10,8 @@ class SmartHike {
     if (this.goals.hasOwnProperty(peak)) {
       return `${peak} has already been added to your goals`;
     }
-
     this.goals[peak] = altitude;
+
     return `You have successfully added a new goal - ${peak}`;
   }
 
@@ -19,28 +19,29 @@ class SmartHike {
     if (!this.goals.hasOwnProperty(peak)) {
       throw new Error(`${peak} is not in your current goals`);
     }
+
     if (this.resources === 0) {
       throw new Error("You don't have enough resources to start the hike");
     }
 
-    let difference = this.resources - time * 10;
-    if (difference < 0) {
+    if (this.resources - time * 10 < 0) {
       return "You don't have enough resources to complete the hike";
     }
-    this.resources = difference;
+
+    this.resources -= time * 10;
+
     this.listOfHikes.push({ peak, time, difficultyLevel });
 
     return `You hiked ${peak} peak for ${time} hours and you have ${this.resources}% resources left`;
   }
 
   rest(time) {
-    let restTimeRes = Number(time) * 10 + this.resources;
-
-    if (restTimeRes >= 100) {
+    if (time * 10 + this.resources >= 100) {
       this.resources = 100;
       return `Your resources are fully recharged. Time for hiking!`;
     }
-    this.resources = restTimeRes;
+
+    this.resources += time * 10;
     return `You have rested for ${time} hours and gained ${
       time * 10
     }% resources`;
@@ -51,26 +52,24 @@ class SmartHike {
       return `${this.username} has not done any hiking yet`;
     }
 
-    let hikes = [];
     if (criteria === "all") {
       let result = "All hiking records:\n";
-      this.listOfHikes.forEach((h) => {
-        result += `${this.username} hiked ${h.peak} for ${h.time} hours\n`;
-      });
+      this.listOfHikes.forEach(
+        (h) =>
+          (result += `${this.username} hiked ${h.peak} for ${h.time} hours\n`)
+      );
       return result.trim();
     } else {
-      this.listOfHikes.forEach((h) => {
-        if (h.difficultyLevel === criteria) {
-          hikes.push(h);
-        }
-      });
+      let sortList = this.listOfHikes
+        .filter((h) => h.difficultyLevel === criteria)
+        .sort((a, b) => a.time - b.time);
 
-      if (hikes.length === 0) {
+      if (sortList.length === 0) {
         return `${this.username} has not done any ${criteria} hiking yet`;
+      } else {
+        let bestHike = sortList.shift();
+        return `${this.username}'s best ${criteria} hike is ${bestHike.peak} peak, for ${bestHike.time} hours`;
       }
-      let sortHike = hikes.sort((a, b) => a.time - b.time);
-
-      return `${this.username}'s best ${criteria} hike is ${sortHike[0].peak} peak, for ${sortHike[0].time} hours`;
     }
   }
 }

@@ -1,9 +1,9 @@
-const expect = require("chai").expect;
-const carService = require("./03. Car Service_Resources");
+const expect = require("chi");
+const carService = require("./carService");
 
 describe("Test Car Service", () => {
-  describe("test is it Expensive (issue)", () => {
-    it("should the value of the parameter issue is equal to Engine or Transmission", () => {
+  describe("Test isItExpensive (issue) function", () => {
+    it("should get message for pay more if issue is equal to 'Engine' or 'Transmission'", () => {
       expect(carService.isItExpensive("Engine")).to.be.equal(
         "The issue with the car is more severe and it will cost more money"
       );
@@ -11,18 +11,24 @@ describe("Test Car Service", () => {
         "The issue with the car is more severe and it will cost more money"
       );
     });
-
-    it("should the value of the parameter issue is NOT equal to Engine or Transmission", () => {
-      expect(carService.isItExpensive("Issue")).to.be.equal(
-        "The overall price will be a bit cheaper"
+    it("should get message for pay less if issue is different to 'Engine' or 'Transmission'", () => {
+      expect(carService.isItExpensive("Tire")).to.be.equal(
+        `The overall price will be a bit cheaper`
+      );
+      expect(carService.isItExpensive("Alternator")).to.be.equal(
+        `The overall price will be a bit cheaper`
       );
     });
   });
-  describe("test discount (numberOfParts, totalPrice) ", () => {
-    it("should data entered is invalid", () => {
-      expect(carService.discount.bind("2", 200)).throw("Invalid input");
-      expect(carService.discount.bind("2", "200")).throw("Invalid input");
-      expect(carService.discount.bind(2, "200")).throw("Invalid input");
+
+  describe("Test discount (numberOfParts, totalPrice) function", () => {
+    it("should invalid input and throw an error", () => {
+      expect(() => {
+        carService.discount("1", 100);
+      }).to.throw("Invalid input");
+      expect(() => {
+        carService.discount(10, "1");
+      }).to.throw("Invalid input");
     });
 
     it("should the numberOfParts is smaller or equal to 2", () => {
@@ -30,6 +36,7 @@ describe("Test Car Service", () => {
         "You cannot apply a discount"
       );
     });
+
     it("should the numberOfParts is bigger to 2", () => {
       expect(carService.discount(5, 100)).to.be.equal(
         "Discount applied! You saved 15$"
@@ -39,7 +46,8 @@ describe("Test Car Service", () => {
       );
     });
   });
-  describe("test parts to buy (partsCatalog, neededParts) ", () => {
+
+  describe("Test parts to buy (partsCatalog, neededParts) function", () => {
     let partsCatalog = [
       { part: "blowoff valve", price: 145 },
       { part: "coil springs", price: 230 },
@@ -47,10 +55,12 @@ describe("Test Car Service", () => {
 
     let neededPart = ["blowoff valve", "injectors"];
     it("should not accept two arrays", () => {
-      expect(carService.partsToBuy.bind("", neededPart)).throw("Invalid input");
-      expect(carService.partsToBuy.bind(partsCatalog, 5)).throw(
-        "Invalid input"
-      );
+      expect(() => {
+        carService.partsToBuy.bind("", neededPart);
+      }).throw("Invalid input");
+      expect(() => {
+        carService.partsToBuy(partsCatalog, "");
+      }).throw("Invalid input");
       expect(carService.partsToBuy.bind(10, "")).throw("Invalid input");
     });
 
