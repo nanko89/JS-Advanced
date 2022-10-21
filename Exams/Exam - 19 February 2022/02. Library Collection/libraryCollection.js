@@ -5,7 +5,7 @@ class LibraryCollection {
   }
 
   addBook(bookName, bookAuthor) {
-    if (this.capacity === this.books.length) {
+    if (this.capacity - this.books.length === 0) {
       throw new Error("Not enough space in the collection.");
     }
 
@@ -14,62 +14,61 @@ class LibraryCollection {
   }
 
   payBook(bookName) {
-    let currentBook = this.books.find((b) => b.bookName === bookName);
-    if (!currentBook) {
+    let book = this.books.find((b) => b.bookName === bookName);
+    if (!book) {
       throw new Error(`${bookName} is not in the collection.`);
     }
-
-    if (currentBook.payed) {
+    if (book.payed) {
       throw new Error(`${bookName} has already been paid.`);
     }
 
-    currentBook.payed = true;
-
+    book.payed = true;
     return `${bookName} has been successfully paid.`;
   }
 
   removeBook(bookName) {
-    let currentBook = this.books.find((b) => b.bookName === bookName);
-    if (!currentBook) {
-      throw new Error(`The book, you're looking for, is not found.`);
+    let book = this.books.find((b) => b.bookName === bookName);
+    if (!book) {
+      throw new Error("The book, you're looking for, is not found.");
     }
-    if (!currentBook.payed) {
+    if (book.payed === false) {
       throw new Error(
         `${bookName} need to be paid before removing from the collection.`
       );
     }
-    this.books.filter((b) => b.bookName !== bookName);
+
+    this.books = this.books.filter((b) => b.bookName !== bookName);
+
     return `${bookName} remove from the collection.`;
   }
 
   getStatistics(bookAuthor) {
-    let result = "";
-    if (bookAuthor === undefined) {
+    if (!bookAuthor) {
+      let result = "";
+
       result += `The book collection has ${
         this.capacity - this.books.length
       } empty spots left.\n`;
 
       this.books
-        .sort((b) => b.bookName.localeCompare(b.bookName))
+        .sort((a, b) => a.bookName.localeCompare(b.bookName))
         .forEach(
           (b) =>
             (result += `${b.bookName} == ${b.bookAuthor} - ${
               b.payed ? "Has Paid" : "Not Paid"
             }.\n`)
         );
+
       return result.trim();
-    } else if (!this.books.find((b) => b.bookAuthor === bookAuthor)) {
-      throw new Error(`${bookAuthor} is not in the collection.`);
     } else {
-      let result = "";
       let authorBooks = this.books.filter((b) => b.bookAuthor === bookAuthor);
-      authorBooks.forEach(
-        (b) =>
-          (result += `${b.bookName} == ${b.bookAuthor} - ${
-            b.payed ? "Has Paid" : "Not Paid"
-          }.\n`)
-      );
-      return result.trim();
+      if (authorBooks.length === 0) {
+        throw new Error(`${bookAuthor} is not in the collection.`);
+      }
+
+      return `${authorBooks[0].bookName} == ${bookAuthor} - ${
+        authorBooks[0].payed ? "Has Paid" : "Not Paid"
+      }.`;
     }
   }
 }

@@ -1,103 +1,96 @@
 function solve() {
-  const hireButton = document.querySelector("#add-worker");
-  const sum = document.querySelector("#sum");
-  const tableBody = document.querySelector("#tbody");
+  const addButton = document.querySelector("#add-worker");
 
-  const fNameInput = document.querySelector("#fname");
-  const lNameInput = document.querySelector("#lname");
-  const emailInput = document.querySelector("#email");
-  const birthInput = document.querySelector("#birth");
-  const positionInput = document.querySelector("#position");
-  const salaryInput = document.querySelector("#salary");
+  const fName = document.querySelector("#fname");
+  const lName = document.querySelector("#lname");
+  const email = document.querySelector("#email");
+  const birth = document.querySelector("#birth");
+  const position = document.querySelector("#position");
+  const salary = document.querySelector("#salary");
 
-  hireButton.addEventListener("click", hireWorkers);
+  const tbody = document.querySelector("#tbody");
+  let totalSum = document.querySelector("#sum");
 
-  function hireWorkers(e) {
+  addButton.addEventListener("click", addWorker);
+
+  function addWorker(e) {
     e.preventDefault();
-    //Check Input
+
+    let fNameValue = fName.value;
+    let lNameValue = lName.value;
+    let emailValue = email.value;
+    let birthValue = birth.value;
+    let positionValue = position.value;
+    let salaryValue = salary.value;
+
     if (
-      !fNameInput.value ||
-      !lNameInput.value ||
-      !emailInput.value ||
-      !birthInput.value ||
-      !positionInput.value ||
-      !salaryInput.value
+      !fNameValue ||
+      !lNameValue ||
+      !emailValue ||
+      !birthValue ||
+      !positionValue ||
+      !salaryValue
     ) {
       return;
     }
-    // HTML Element Generator
-    function htmlGenerator(tagName, text) {
-      let element = document.createElement(tagName);
-      if (text) {
-        element.textContent = text;
-      }
-      return element;
-    }
 
-    //
-    let trElement = htmlGenerator("tr");
-    let tdFNameElement = htmlGenerator("td", `${fNameInput.value}`);
-    let tdLNameElement = htmlGenerator("td", `${lNameInput.value}`);
-    let tdEmailElement = htmlGenerator("td", `${emailInput.value}`);
-    let tdBirthElement = htmlGenerator("td", `${birthInput.value}`);
-    let tdPositionElement = htmlGenerator("td", `${positionInput.value}`);
-    let tdSalaryElement = htmlGenerator("td", `${salaryInput.value}`);
+    let tr = htmlGenerator("tr", "", tbody);
+    htmlGenerator("td", fNameValue, tr);
+    htmlGenerator("td", lNameValue, tr);
+    htmlGenerator("td", emailValue, tr);
+    htmlGenerator("td", birthValue, tr);
+    htmlGenerator("td", positionValue, tr);
+    htmlGenerator("td", salaryValue, tr);
 
-    let tdAction = htmlGenerator("td");
-    let firedButton = htmlGenerator("button", "Fired");
-    let editButton = htmlGenerator("button", "Edit");
-
+    let td = htmlGenerator("td", "", tr);
+    let firedButton = htmlGenerator("button", "Fired", td);
     firedButton.classList.add("fired");
+    firedButton.addEventListener("click", (e) => {
+      e.target.parentElement.parentElement.remove();
+      totalSum.textContent = (
+        Number(totalSum.textContent) - Number(salaryValue)
+      ).toFixed(2);
+    });
+
+    let editButton = htmlGenerator("button", "Edit", td);
     editButton.classList.add("edit");
+    editButton.addEventListener("click", (e) => {
+      e.target.parentElement.parentElement.remove();
+      fName.value = fNameValue;
+      lName.value = lNameValue;
+      email.value = emailValue;
+      birth.value = birthValue;
+      position.value = positionValue;
+      salary.value = salaryValue;
+      totalSum.textContent = (
+        Number(totalSum.textContent) - Number(salaryValue)
+      ).toFixed(2);
+    });
 
-    tdAction.appendChild(firedButton);
-    tdAction.appendChild(editButton);
-
-    trElement.appendChild(tdFNameElement);
-    trElement.appendChild(tdLNameElement);
-    trElement.appendChild(tdEmailElement);
-    trElement.appendChild(tdBirthElement);
-    trElement.appendChild(tdPositionElement);
-    trElement.appendChild(tdSalaryElement);
-    trElement.appendChild(tdAction);
-
-    tableBody.appendChild(trElement);
-
-    // let initSum = Number(sum.textContent);
-    // sum.innerText = (Number(salaryInput.value) + initSum).toFixed(2);
-    sum.textContent = (
-      Number(sum.textContent) + Number(salaryInput.value)
+    totalSum.textContent = (
+      Number(totalSum.textContent) + Number(salaryValue)
     ).toFixed(2);
 
-    fNameInput.value = "";
-    lNameInput.value = "";
-    emailInput.value = "";
-    birthInput.value = "";
-    positionInput.value = "";
-    salaryInput.value = "";
+    clearInput();
+  }
 
-    firedButton.addEventListener("click", (e) => {
-      let currentEmployee = e.target.parentElement.parentElement;
-      currentEmployee.parentElement.removeChild(currentEmployee);
-      sum.textContent = (sum.textContent - tdSalaryElement.textContent).toFixed(
-        2
-      );
-    });
+  function clearInput() {
+    fName.value = "";
+    lName.value = "";
+    email.value = "";
+    birth.value = "";
+    position.value = "";
+    salary.value = "";
+  }
 
-    editButton.addEventListener("click", (e) => {
-      let currentEmployee = e.target.parentElement.parentElement;
-      currentEmployee.parentElement.removeChild(currentEmployee);
-      sum.textContent = (sum.textContent - tdSalaryElement.textContent).toFixed(
-        2
-      );
+  function htmlGenerator(type, content, parent) {
+    const element = document.createElement(type);
+    element.textContent = content;
 
-      fNameInput.value = tdFNameElement.textContent;
-      lNameInput.value = tdLNameElement.textContent;
-      emailInput.value = tdEmailElement.textContent;
-      birthInput.value = tdBirthElement.textContent;
-      positionInput.value = tdPositionElement.textContent;
-      salaryInput.value = tdSalaryElement.textContent;
-    });
+    if (parent) {
+      parent.appendChild(element);
+    }
+    return element;
   }
 }
 solve();
