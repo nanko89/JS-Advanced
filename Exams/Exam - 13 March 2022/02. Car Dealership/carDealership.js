@@ -19,56 +19,52 @@ class CarDealership {
   }
 
   sellCar(model, desiredMileage) {
-    let findIndexModel = this.availableCars.findIndex((c) => c.model === model);
-
-    if (findIndexModel === -1) {
+    let car = this.availableCars.find((c) => c.model === model);
+    if (!car) {
       throw new Error(`${model} was not found!`);
     }
-    let currentCar = this.availableCars[findIndexModel];
 
-    let horsepower = currentCar.horsepower;
-    let availableMileage = currentCar.mileage;
-    let soldPrice = currentCar.price;
-
-    if (availableMileage > desiredMileage) {
-      let difference = availableMileage - desiredMileage;
-
-      if (difference <= 40000) {
-        soldPrice -= soldPrice * 0.05;
-      } else {
-        soldPrice -= soldPrice * 0.1;
-      }
+    let diffMileage = car.mileage - desiredMileage;
+    let soldPrice = 0;
+    if (diffMileage <= 0) {
+      soldPrice = car.price;
+    } else if (diffMileage <= 40000) {
+      soldPrice = car.price * 0.95;
+    } else {
+      soldPrice = car.price * 0.9;
     }
 
-    let soldCar = { model, horsepower, soldPrice };
-    this.availableCars.splice(findIndexModel, 1);
-    this.soldCars.push(soldCar);
     this.totalIncome += soldPrice;
 
+    this.availableCars = this.availableCars.filter((c) => c.model !== model);
+    this.soldCars.push({
+      model,
+      horsepower: Number(car.horsepower),
+      soldPrice,
+    });
     return `${model} was sold for ${soldPrice.toFixed(2)}$`;
   }
 
   currentCar() {
     if (this.availableCars.length === 0) {
       return "There are no available cars";
+    } else {
+      let result = "-Available cars:\n";
+      this.availableCars.forEach(
+        (c) =>
+          (result += `---${c.model} - ${c.horsepower} HP - ${c.mileage.toFixed(
+            2
+          )} km - ${c.price.toFixed(2)}$\n`)
+      );
+
+      return result.trim();
     }
-
-    let result = "-Available cars:\n";
-    this.availableCars.forEach(
-      (c) =>
-        (result += `---${c.model} - ${c.horsepower} HP - ${c.mileage.toFixed(
-          2
-        )} km - ${c.price.toFixed(2)}$\n`)
-    );
-
-    return result.trim();
   }
 
   salesReport(criteria) {
     if (criteria !== "horsepower" && criteria !== "model") {
       throw new Error("Invalid criteria!");
     }
-
     criteria === "horsepower"
       ? this.soldCars.sort((a, b) => b.horsepower - a.horsepower)
       : this.soldCars.sort((a, b) => a.model.localeCompare(b.model));

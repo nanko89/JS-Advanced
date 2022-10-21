@@ -29,26 +29,22 @@ function solve() {
       return;
     }
 
-    //Factory elements
-    function htmlGenerator(tagName, text) {
-      let element = document.createElement(tagName);
-      if (text) {
-        element.textContent = text;
-      }
-      return element;
-    }
-
     //Create elements
-    let liElement = htmlGenerator("li");
-    let h4TitleElement = htmlGenerator("h4", `Title: ${titleInput.value}`);
+    let liElement = htmlGenerator("li", "", listMails);
+    let h4TitleElement = htmlGenerator(
+      "h4",
+      `Title: ${titleInput.value}`,
+      liElement
+    );
     let h4RecipientNameElement = htmlGenerator(
       "h4",
-      `Recipient Name: ${recipientNameInput.value}`
+      `Recipient Name: ${recipientNameInput.value}`,
+      liElement
     );
-    let spanMessageElement = htmlGenerator("span", `${messageInput.value}`);
-    let divAction = htmlGenerator("div");
-    let sendButton = htmlGenerator("button", "Send");
-    let deleteButton = htmlGenerator("button", "Delete");
+    htmlGenerator("span", `${messageInput.value}`, liElement);
+    let divAction = htmlGenerator("div", "", liElement);
+    let sendButton = htmlGenerator("button", "Send", divAction);
+    let deleteButton = htmlGenerator("button", "Delete", divAction);
 
     //Set attribute to elements
     divAction.setAttribute("id", "list-action");
@@ -59,57 +55,27 @@ function solve() {
     deleteButton.setAttribute("type", "submit");
     deleteButton.setAttribute("id", "delete");
 
-    //Append child to element
-    divAction.appendChild(sendButton);
-    divAction.appendChild(deleteButton);
-
-    liElement.appendChild(h4TitleElement);
-    liElement.appendChild(h4RecipientNameElement);
-    liElement.appendChild(spanMessageElement);
-    liElement.appendChild(divAction);
-
-    listMails.appendChild(liElement);
-
-    //Clear input
-    titleInput.value = "";
-    recipientNameInput.value = "";
-    messageInput.value = "";
-
     //Add events to SEND button
 
     sendButton.addEventListener("click", (e) => {
-      let currentElement = e.target.parentElement.parentElement;
-
-      //Remove element
-      currentElement.parentElement.removeChild(currentElement);
+      e.target.parentElement.parentElement.remove();
 
       //Create Element
-      let spanRecipientNameMailElement = htmlGenerator(
+      let listMailElement = htmlGenerator("li", "", sendList);
+      htmlGenerator(
         "span",
-        "To: " + h4RecipientNameElement.textContent.substring(16) + " "
+        "To: " + h4RecipientNameElement.textContent.substring(16) + " ",
+        listMailElement
       );
+      htmlGenerator("span", h4TitleElement.textContent, listMailElement);
 
-      let listMailElement = htmlGenerator("li");
-      let spanTitleMailElement = htmlGenerator(
-        "span",
-        h4TitleElement.textContent
-      );
-
-      let divMailElement = htmlGenerator("div");
-      let deleteMailButton = htmlGenerator("button", "Delete");
+      let divMailElement = htmlGenerator("div", "", listMailElement);
+      let deleteMailButton = htmlGenerator("button", "Delete", divMailElement);
 
       //Set attribute
       deleteMailButton.setAttribute("type", "submit");
       deleteMailButton.setAttribute("class", "delete");
       divMailElement.setAttribute("class", "btn");
-
-      //Append child
-      divMailElement.appendChild(deleteMailButton);
-      listMailElement.appendChild(spanRecipientNameMailElement);
-      listMailElement.appendChild(spanTitleMailElement);
-      listMailElement.appendChild(divMailElement);
-
-      sendList.appendChild(listMailElement);
 
       deleteMailButton.addEventListener("click", deleteFunction);
     });
@@ -117,27 +83,32 @@ function solve() {
     deleteButton.addEventListener("click", deleteFunction);
 
     function deleteFunction(e) {
-      let currentElement = e.target.parentElement.parentElement;
-
-      //Remove element
-      currentElement.parentElement.removeChild(currentElement);
+      e.target.parentElement.parentElement.remove();
 
       //Create Element
-      let spanRecipientNameDeleteElement = htmlGenerator(
+      let liRemoveElement = htmlGenerator("li", "", deleteList);
+      htmlGenerator(
         "span",
-        "To: " + h4RecipientNameElement.textContent.substring(16) + " "
+        "To: " + h4RecipientNameElement.textContent.substring(16) + " ",
+        liRemoveElement
       );
 
-      let spanTitleDeleteElement = htmlGenerator(
-        "span",
-        h4TitleElement.textContent
-      );
-
-      let liRemoveElement = htmlGenerator("li");
-      liRemoveElement.appendChild(spanRecipientNameDeleteElement);
-      liRemoveElement.appendChild(spanTitleDeleteElement);
-      deleteList.appendChild(liRemoveElement);
+      htmlGenerator("span", h4TitleElement.textContent, liRemoveElement);
     }
+    //Clear input
+    titleInput.value = "";
+    recipientNameInput.value = "";
+    messageInput.value = "";
+  }
+
+  function htmlGenerator(type, content, parent) {
+    const element = document.createElement(type);
+    element.textContent = content;
+
+    if (parent) {
+      parent.appendChild(element);
+    }
+    return element;
   }
 }
 solve();
