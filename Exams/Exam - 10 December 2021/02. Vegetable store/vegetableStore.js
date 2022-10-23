@@ -6,83 +6,80 @@ class VegetableStore {
   }
 
   loadingVegetables(vegetables) {
-    for (const vegetable of vegetables) {
-      let [type, quantity, price] = vegetable.split(" ");
+    for (const item of vegetables) {
+      let [type, quantity, price] = item.split(" ");
+      quantity = Number(quantity);
+      price = Number(price);
 
-      if (!this.availableProducts.find((veg) => veg.type === type)) {
-        this.availableProducts.push({
-          type,
-          quantity: Number(quantity),
-          price,
-        });
-      } else {
-        let currentVeg = this.availableProducts.find(
-          (veg) => veg.type === type
-        );
-        currentVeg.price = price > currentVeg.price ? price : currentVeg.price;
-        currentVeg.quantity += Number(quantity);
+      if (!this.availableProducts.find((p) => p.type === type)) {
+        this.availableProducts.push({ type, quantity: 0, price: 0 });
+      }
+      let currentType = this.availableProducts.find((p) => p.type === type);
+
+      currentType.quantity += quantity;
+
+      if (currentType.price < price) {
+        currentType.price = price;
       }
     }
-    let allVegetables = this.availableProducts
-      .map((v) => `${v.type}`)
-      .join(", ");
-    return `Successfully added ${allVegetables}`;
+
+    return `Successfully added ${this.availableProducts
+      .map((v) => v.type)
+      .join(", ")}`;
   }
 
   buyingVegetables(selectedProducts) {
     let totalPrice = 0;
-    for (const product of selectedProducts) {
-      let [type, quantity] = product.split(" ");
-      let availableProduct = this.availableProducts.find(
-        (p) => p.type === type
-      );
-      if (!availableProduct) {
+    for (const item of selectedProducts) {
+      let [type, quantity] = item.split(" ");
+      quantity = Number(quantity);
+
+      let currentType = this.availableProducts.find((p) => p.type === type);
+
+      if (!currentType) {
         throw new Error(
           `${type} is not available in the store, your current bill is $${totalPrice.toFixed(
             2
           )}.`
         );
       }
-      if (availableProduct.quantity < Number(quantity)) {
+      if (currentType.quantity < quantity) {
         throw new Error(
           `The quantity ${quantity} for the vegetable ${type} is not available in the store, your current bill is $${totalPrice.toFixed(
             2
           )}.`
         );
       }
-      availableProduct.quantity -= Number(quantity);
-      totalPrice += quantity * availableProduct.price;
+
+      currentType.quantity -= quantity;
+      totalPrice += quantity * currentType.price;
     }
     return `Great choice! You must pay the following amount $${totalPrice.toFixed(
       2
     )}.`;
   }
-
   rottingVegetable(type, quantity) {
-    let rottingProduct = this.availableProducts.find((p) => p.type === type);
-    if (!rottingProduct) {
+    let product = this.availableProducts.find((p) => p.type === type);
+    if (!product) {
       throw new Error(`${type} is not available in the store.`);
     }
-    if (rottingProduct.quantity < quantity) {
-      rottingProduct.quantity = 0;
+    if (product.quantity <= quantity) {
+      product.quantity = 0;
       return `The entire quantity of the ${type} has been removed.`;
     }
 
-    rottingProduct.quantity -= quantity;
+    product.quantity -= Number(quantity);
     return `Some quantity of the ${type} has been removed.`;
   }
 
   revision() {
     let result = "Available vegetables:\n";
 
-    let sortVegetables = this.availableProducts.sort(
-      (a, b) => a.price - b.price
-    );
-    sortVegetables.forEach(
-      (veg) => (result += `${veg.type}-${veg.quantity}-$${veg.price}\n`)
-    );
-
-    result += `The owner of the store is ${this.owner}, and the location is ${this.location}.`;
+    let sortVegetables = this.availableProducts
+      .sort((a, b) => a.price - b.price)
+      .map((p) => `${p.type}-${p.quantity}-$${p.price}`);
+    result += sortVegetables.join("\n");
+    result += `\nThe owner of the store is ${this.owner}, and the location is ${this.location}.`;
     return result;
   }
 }

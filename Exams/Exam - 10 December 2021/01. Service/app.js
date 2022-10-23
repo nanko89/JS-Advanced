@@ -94,3 +94,96 @@ function solve() {
     }
   }
 }
+
+///Second decision
+
+// function solve() {
+//   const sendButton = document.querySelector("button");
+//   const clearButton = document.querySelector(".clear-btn");
+
+//   const type = document.querySelector("#type-product");
+//   const description = document.querySelector("#description");
+//   const name = document.querySelector("#client-name");
+//   const phone = document.querySelector("#client-phone");
+
+//   const recivedOrders = document.querySelector("#received-orders");
+//   const completedOrders = document.querySelector("#completed-orders");
+
+//   sendButton.addEventListener("click", sendForm);
+//   clearButton.addEventListener("click", clearOrder);
+//   function sendForm(e) {
+//     e.preventDefault();
+
+//     let typeValue = type.value;
+//     let descriptionValue = description.value;
+//     let nameValue = name.value;
+//     let phoneValue = phone.value;
+
+//     if (!descriptionValue || !nameValue || !phoneValue) {
+//       return;
+//     }
+
+//     let div = htmlGenerator("div", "", recivedOrders);
+//     div.classList.add("container");
+
+//     htmlGenerator("h2", `Product type for repair: ${typeValue}`, div);
+//     htmlGenerator("h3", `Client information: ${nameValue}, ${phoneValue}`, div);
+//     htmlGenerator("h4", `Description of the problem: ${descriptionValue}`, div);
+
+//     let startBtn = htmlGenerator("button", "Start repair", div);
+//     startBtn.classList.add("start-btn");
+//     startBtn.addEventListener("click", () => {
+//       startBtn.setAttribute("disabled", true);
+//       finishBtn.disabled = false;
+//     });
+
+//     let finishBtn = htmlGenerator("button", "Finish repair", div);
+//     finishBtn.classList.add("finish-btn");
+//     finishBtn.setAttribute("disabled", true);
+//     finishBtn.addEventListener("click", (e) => {
+//       e.target.parentElement.remove();
+
+//       let div = htmlGenerator("div", "", completedOrders);
+//       div.classList.add("container");
+
+//       htmlGenerator("h2", `Product type for repair: ${typeValue}`, div);
+//       htmlGenerator(
+//         "h3",
+//         `Client information: ${nameValue}, ${phoneValue}`,
+//         div
+//       );
+//       htmlGenerator(
+//         "h4",
+//         `Description of the problem: ${descriptionValue}`,
+//         div
+//       );
+//     });
+
+//     clearInput();
+//   }
+
+//   function clearOrder(e) {
+//     debugger;
+
+//     e.preventDefault();
+
+//     let divElements = completedOrders.getElementsByClassName("container");
+
+//     Array.from(divElements).forEach((el) => el.remove());
+//   }
+
+//   function htmlGenerator(tagName, content, parent) {
+//     let element = document.createElement(tagName);
+//     element.textContent = content;
+//     if (parent) {
+//       parent.appendChild(element);
+//     }
+//     return element;
+//   }
+
+//   function clearInput() {
+//     description.value = "";
+//     name.value = "";
+//     phone.value = "";
+//   }
+// }
